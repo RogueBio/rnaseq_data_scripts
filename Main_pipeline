@@ -1,5 +1,7 @@
 #!/bin/bash
 
+## Quality Control FastQC Process 
+
 # Directory containing the raw data
 RAW_DATA_DIR="raw_data"
 
