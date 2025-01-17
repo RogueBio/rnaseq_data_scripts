@@ -22,3 +22,28 @@ for fastq_file in $fastq_files; do
            --job-name="fastqc_$filename" \
            "$fastqc_dir/fastqc.sh"
 done
+
+## Trimming with Trimmomatic
+
+# Directory containing the raw data
+RAW_DATA_DIR="raw_data"
+
+# Find all .fastq files in the raw_data directory and its subdirectories
+fastq_files=$(find "$RAW_DATA_DIR" -type f -name "*.fastq")
+
+# Define the directory containing the Trimmomatic script (local path, not URL)
+trimm_dir="/path/to/your/trimmomatic/script"
+
+# Define the output directory where Trimmomatic results will be saved
+OUTPUT_DIR="/path/to/output/directory"
+
+# Loop through each .fastq file
+for fastq_file in $fastq_files; do
+    # Extract file name for unique job naming
+    filename=$(basename "$fastq_file" .fastq)
+    
+    # Submit Trimmomatic job for each file
+    sbatch --export=fastq_file="$fastq_file",output_dir="$OUTPUT_DIR" \
+           --job-name="trimm$filename" \
+           "$trimm_dir/trimmomatic.sh"
+done
