@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Directory containing the raw data
-RAW_DATA_DIR="raw_data"
+RAW_DATA_DIR="raw_data path"
 
 # Find all .fastq files in the raw_data directory and its subdirectories
 fastq_files=$(find "$RAW_DATA_DIR" -type f -name "*.fastq")
@@ -26,7 +26,7 @@ done
 ## Trimming with Trimmomatic
 
 # Directory containing the raw data
-RAW_DATA_DIR="raw_data"
+RAW_DATA_DIR="raw_data path"
 
 # Find all .fastq files in the raw_data directory and its subdirectories
 fastq_files=$(find "$RAW_DATA_DIR" -type f -name "*.fastq")
@@ -47,3 +47,27 @@ for fastq_file in $fastq_files; do
            --job-name="trimm$filename" \
            "$trimm_dir/trimmomatic.sh"
 done
+
+# Directory containing the trimmed data
+TRIM_DATA_DIR="trimmed data path"
+
+# Find all .fastq files in the raw_data directory and its subdirectories
+fastq_files=$(find "$TRIM_DATA_DIR" -type f -name "*.fastq")
+
+# Define the directory containing the FastQC script (local path, not URL)
+fastqc_dir="/path/to/your/fastqc/script"
+
+# Define the output directory where FastQC results will be saved
+OUTPUT_DIR="/path/to/output/directory"
+
+# Loop through each .fastq file
+for fastq_file in $fastq_files; do
+    # Extract file name for unique job naming
+    filename=$(basename "$fastq_file" .fastq)
+    
+    # Submit FastQC job for each file
+    sbatch --export=fastq_file="$fastq_file",output_dir="$OUTPUT_DIR" \
+           --job-name="fastqc_$filename" \
+           "$fastqc_dir/fastqc.sh"
+done
+
