@@ -71,3 +71,4 @@ for fastq_file in $fastq_files; do
            "$fastqc_dir/fastqc.sh"
 done
 
+
