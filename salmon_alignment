@@ -13,7 +13,7 @@
 salmon_index=$salmon_index
 r1_file=$r1_file
 r2_file=$r2_file
-sample_name=$base_filename
+sample_name=$sample_name
 output_dir=$output_dir
 
 #run salmon (check how many threads I can allocate, here's 28)
