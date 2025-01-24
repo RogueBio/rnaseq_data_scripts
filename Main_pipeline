@@ -138,4 +138,15 @@ echo "Submitting job for sample ${base_filename}"
         salmon_alignment.sh
 done
 
+## Importing transcript abundance with tximport
+
+##On R:
+
+library(tximport)
+library(ensembldb)
+library(AnnotationHub)
+library(DeSeq2)
+
+
+
 
