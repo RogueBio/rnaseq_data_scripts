@@ -106,7 +106,36 @@ sbatch --export=transcriptome="trans_and_gen.fa.gz",decoy_file="decoys.txt",inde
        --job-name="salmon_indexing" \
        "$your_script_dir/salmon_decoy_generation.sh"
 
+#Run alignment with Salmon
 
+#Set path to salmon index
 
+salmon_index = "salmon index file/AGAM_PEST_salmon_index" 
+
+#Trimmed fastq file folder
+
+TRIM_DATA_DIR="trimmed data path"
+
+#Loop through directories within the fastq folder (here SRR should be changed to whatever naming system my files will have)
+
+for dir in ${TRIM_DATA_DIR}"/SRR*;do 
+
+#Find R1 and R2 files
+
+r1_file = $(find "$dir" -name"*_1.fastq.gz")
+r2_file=$(find "$dir" -name"*_2.fastq.gz")
+
+#Extract sample name
+
+base_filename=$(basename "$dir")
+
+#Run salmon alignment 
+
+echo "Submitting job for sample ${base_filename}"
+    
+    # Submit sbatch job for Salmon alignment
+    sbatch --export=ALL,salmon_index="${salmon_index}",r1_file="${r1_file}",r2_file="${r2_file}",sample_name="${base_filename}",output_dir="${SALMON_OUT_DIR}" \
+        salmon_alignment.sh
+done
 
 
