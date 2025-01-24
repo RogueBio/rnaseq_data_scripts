@@ -1,0 +1,35 @@
+#!/bin/bash
+#SBATCH -p short          # Partition name
+#SBATCH -t 0-2:00         # Time limit (D-HH:MM)
+#SBATCH -c 6              # Number of cores
+#SBATCH --mem 6G          # Requested memory
+#SBATCH -o %x_%j.out      # File to which stdout will be written
+#SBATCH -e %x_%j.err      # File to which stderr will be written
+
+# Load modules required for script commands
+module load salmon
+module load gzip
+
+##Generating a decoy-aware transcriptome
+# Directories containing the reference genome and transcript data
+ref_genome_dir="/home/user/ref_genome"
+transcripts_dir="/home/user/ref_transcripts"
+
+#Extract chromosome information from the genome file to make the decoys.txt file
+grep "^>" <(gunzip -c ${ref_genome_dir}/GRCm38.primary_assembly.genome.fa.gz) | cut -d " " -f 1 > decoys.txt
+
+#Check
+head decoys.txt
+
+#Remove the > symbol from the file
+sed -i.bak -e 's/>//g' decoys.txt
+
+#Check
+head decoys.txt
+
+# Combine the transcripts and genome file into a single file (in this order)
+cat ${transcripts_dir}/transcripts.fa.gz ${ref_genome_dir}/GRCm38.primary_assembly.genome.fa.gz > trans_and_gen.fa.gz
+
+# Run salmon index with the decoy-aware transcriptome
+salmon index -t trans_and_gen.fa.gz -d decoys.txt -p 30 -i AGAM_PEST_salmon_index
+
