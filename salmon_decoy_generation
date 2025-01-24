@@ -10,26 +10,30 @@
 module load salmon
 module load gzip
 
-##Generating a decoy-aware transcriptome
-# Directories containing the reference genome and transcript data
-ref_genome_dir="/home/user/ref_genome"
-transcripts_dir="/home/user/ref_transcripts"
+#Check files and directories are available
 
-#Extract chromosome information from the genome file to make the decoys.txt file
-grep "^>" <(gunzip -c ${ref_genome_dir}/GRCm38.primary_assembly.genome.fa.gz) | cut -d " " -f 1 > decoys.txt
+if [ ! -f "$transcriptome" ]; then
+    echo "Error: Transcriptome file $transcriptome not found!"
+    exit 1
+fi
 
-#Check
-head decoys.txt
+if [ ! -f "$decoy_file" ]; then
+    echo "Error: Decoy file $decoy_file not found!"
+    exit 1
+fi
 
-#Remove the > symbol from the file
-sed -i.bak -e 's/>//g' decoys.txt
-
-#Check
-head decoys.txt
-
-# Combine the transcripts and genome file into a single file (in this order)
-cat ${transcripts_dir}/transcripts.fa.gz ${ref_genome_dir}/GRCm38.primary_assembly.genome.fa.gz > trans_and_gen.fa.gz
+# Create the output directory for salmon index if it doesn't exist
+mkdir -p $index_dir
 
 # Run salmon index with the decoy-aware transcriptome
 salmon index -t trans_and_gen.fa.gz -d decoys.txt -p 30 -i AGAM_PEST_salmon_index
+
+# Check salmon indexing worked
+if [ $? -eq 0 ]; then
+    echo "Salmon index completed successfully in $elapsed_time seconds."
+else
+    echo "Error: Salmon index failed!"
+    exit 1
+fi
+
 
