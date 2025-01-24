@@ -7,7 +7,7 @@
 #SBATCH -e %x_%j.err      # File to which stderr will be written
 
 #Set path to salmon index
-salmon_index = "salmon index file" 
+salmon_index = "salmon index file/AGAM_PEST_salmon_index" 
 
 #Trimmed fastq file folder
 TRIM_DATA_DIR="trimmed data path"
