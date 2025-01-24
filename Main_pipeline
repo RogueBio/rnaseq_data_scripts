@@ -1,5 +1,7 @@
 #!/bin/bash
 
+## FastQC
+
 # Directory containing the raw data
 RAW_DATA_DIR="raw_data path"
 
@@ -48,6 +50,8 @@ for fastq_file in $fastq_files; do
            "$trimm_dir/trimmomatic.sh"
 done
 
+## FastQC of trimmed reads
+
 # Directory containing the trimmed data
 TRIM_DATA_DIR="trimmed data path"
 
@@ -70,5 +74,47 @@ for fastq_file in $fastq_files; do
            --job-name="fastqc_$filename" \
            "$fastqc_dir/fastqc.sh"
 done
+
+## Salmon Alignment
+
+##Generating a decoy-aware transcriptome
+
+# Directory containing the reference genome 
+ref_genome_dir="/path/to/refgenome/directory"
+
+# Directory containing the reference transcripts data
+transcripts_dir="/path/to/refgenome/directory"
+
+#Extract chromosome information from the genome file to make the decoys.txt file
+grep "^>" <(gunzip -c ref_genome_dir/GRCm38.primary_assembly.genome.fa.gz) | cut -d " " -f 1 > decoys.txt
+
+#Check
+head decoys.txt
+
+#Remove the > symbol from the file
+sed -i.bak -e 's/>//g' decoys.txt
+
+#Check
+head decoys.txt
+
+#Combine the transcripts and genome file, in this order!
+cat transcripts_dir/transcripts.fa.gz ref_genome_dir/refgenome.fa.gz > trans_and_gen.fa.gz
+
+#Run salmon index from decoy and trancript/genome file
+salmon index -t trans_and_gen.fa.gz -d decoys.txt -p 30 -i agap_PEST_salmon_index
+
+#Run salmon alignment 
+salmon quant -i agap_PEST_salmon_index/ -l A -1 r1.fastq -2 r2.fastq -- validateMappings -o salmon_out/
+
+# Directory containing the trimmed data
+TRIM_DATA_DIR="trimmed data path"
+
+# Find all .fastq files in the raw_data directory and its subdirectories
+fastq_files=$(find "$TRIM_DATA_DIR" -type f -name "*.fastq")
+
+
+
+
+
 
 
