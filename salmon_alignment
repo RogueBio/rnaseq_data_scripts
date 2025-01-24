@@ -6,34 +6,31 @@
 #SBATCH -o %x_%j.out      # File to which stdout will be written
 #SBATCH -e %x_%j.err      # File to which stderr will be written
 
-#Set path to salmon index
+# Load Salmon module if needed
+# module load salmon
 
-salmon_index = "salmon index file/AGAM_PEST_salmon_index" 
+# Get variables passed via sbatch
+salmon_index=$salmon_index
+r1_file=$r1_file
+r2_file=$r2_file
+sample_name=$base_filename
+output_dir=$output_dir
 
-#Trimmed fastq file folder
-
-TRIM_DATA_DIR="trimmed data path"
-
-#Loop through directories within the fastq folder (here SRR should be changed to whatever naming system my files will have)
-
-for dir in ${TRIM_DATA_DIR}"/SRR*;do 
-
-#Find R1 and R2 files
-
-r1_file = $(find "$dir" -name"*_1.fastq.gz")
-r2_file=$(find "$dir" -name"*_2.fastq.gz")
-
-#Extract sample name
-
-base_filename=$(basename "$dir")
-
-#run salmon (check how many threads i can allocate, here's 28)
+#run salmon (check how many threads I can allocate, here's 28)
 
 echo "Processing sample ${base_filename}"
 salmon quant -i "$salmon_index' -l A \
 -1 "$r1_file" \
 -2 "r2_file" \ 
--p 28 --validateMappings -o "salmon_out/${samp}_quant"
+-p 6
+--validateMappings
+-o "${output_dir}/${sample_name}_quant"
 
-
+# Check if Salmon finished successfully
+if [ $? -eq 0 ]; then
+    echo "Salmon completed successfully for ${sample_name}."
+else
+    echo "Error: Salmon failed for ${sample_name}. Check logs for details."
+    exit 1
+fi
 
