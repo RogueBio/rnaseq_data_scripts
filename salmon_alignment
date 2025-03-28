@@ -1,10 +1,9 @@
 #!/bin/bash
-#SBATCH -p short          # Partition name
-#SBATCH -t 0-2:00         # Time limit (D-HH:MM)
-#SBATCH -c 6              # Number of cores
-#SBATCH --mem 6G          # Requested memory
-#SBATCH -o %x_%j.out      # File to which stdout will be written
-#SBATCH -e %x_%j.err      # File to which stderr will be written
+#SBATCH --partition=cpu-standard
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=10
+#SBATCH --mem=40G
 
 # Load Salmon module if needed
 # module load salmon
