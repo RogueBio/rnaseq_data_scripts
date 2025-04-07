@@ -1,0 +1,20 @@
+#!/bin/bash
+
+RAW_DATA_DIR=Data_for_tests/220211_A00181_0425_BHVMJNDSX2
+
+fastq_files=$(find "$RAW_DATA_DIR" -type f \( -iname "*.fastq" -o -iname "*.fastq.gz" -o -iname "*.fq" -o -iname "*.fq.gz" \))
+
+for fastq_file in $fastq_files; do
+    filename=$(basename "$fastq_file")
+
+    echo "Would submit job for: $filename"
+    echo "Full path: $fastq_file"
+    echo "Job name: fastqc_${filename%.*}"
+    echo "---"
+done
+
+## To remove all files outputted from sbatch is
+
+rm -rf *.out 
+
+
