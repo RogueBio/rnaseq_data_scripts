@@ -9,10 +9,10 @@ RAW_DATA_DIR=Data_for_tests/220211_A00181_0425_BHVMJNDSX2
 fastq_files=$(find "$RAW_DATA_DIR" -type f \( -iname "*.fastq" -o -iname "*.fastq.gz" -o -iname "*.fq" -o -iname "*.fq.gz" \))
 
 # Define the directory containing the FastQC script (local path, not URL)
-fastqc_dir="/path/to/your/fastqc/script"
+fastqc_dir=git_repos/rnaseq_data_scripts
 
 # Define the output directory where FastQC results will be saved
-OUTPUT_DIR="/path/to/output/directory"
+OUTPUT_DIR=Data_for_tests/fastqc_results
 
 # Loop through each .fastq file
 for fastq_file in $fastq_files; do
@@ -100,7 +100,7 @@ head decoys.txt
 #Combine the transcripts and genome file, in this order!
 cat transcripts_dir/transcripts.fa.gz ref_genome_dir/refgenome.fa.gz > trans_and_gen.fa.gz
 
-#Run salmon index from decoy and trancript/genome file
+#Run salmon index from decoy and transcript/genome file
 
 sbatch --export=transcriptome="trans_and_gen.fa.gz",decoy_file="decoys.txt",index_dir="AGAM_PEST_salmon_index" \
        --job-name="salmon_indexing" \
