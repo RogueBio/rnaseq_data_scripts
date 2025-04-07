@@ -3,10 +3,10 @@
 ## FastQC
 
 # Directory containing the raw data
-RAW_DATA_DIR="raw_data path"
+RAW_DATA_DIR=Data_for_tests/220211_A00181_0425_BHVMJNDSX2
 
 # Find all .fastq files in the raw_data directory and its subdirectories
-fastq_files=$(find "$RAW_DATA_DIR" -type f -name "*.fastq")
+fastq_files=$(find "$RAW_DATA_DIR" -type f \( -iname "*.fastq" -o -iname "*.fastq.gz" -o -iname "*.fq" -o -iname "*.fq.gz" \))
 
 # Define the directory containing the FastQC script (local path, not URL)
 fastqc_dir="/path/to/your/fastqc/script"
