@@ -11,6 +11,7 @@ fastq_files=$(find "$RAW_DATA_DIR" -type f \( -iname "*.fastq" -o -iname "*.fast
 # Define the directory containing the FastQC script (local path, not URL)
 fastqc_dir=git_repos/rnaseq_data_scripts
 
+mkdir -p Data_for_tests/fastqc_results
 # Define the output directory where FastQC results will be saved
 OUTPUT_DIR=Data_for_tests/fastqc_results
 
