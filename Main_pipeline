@@ -1,7 +1,6 @@
-#!/bin/bash
+## 1. Running FastQC on samples
 
-## FastQC
-
+```
 # Directory containing the raw data
 raw_data_dir=Data_for_tests/220211_A00181_0425_BHVMJNDSX2
 
@@ -25,6 +24,7 @@ for fastq_file in $fastq_files; do
            --job-name="fastqc_$filename" \
            "$fastqc_dir/fastqc.sh"
 done
+```
 
 ## Trimming with Trimmomatic
 
