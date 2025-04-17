@@ -7,7 +7,7 @@ Pipeline to run transcriptomic analysis of an experiment where _Anopheles coluzz
 
 Project directory:
 
-''
+```text
 mosquito_phagostimulation/
 │
 ├── raw_data/              # Original FASTQ files (read-only)
@@ -23,7 +23,7 @@ mosquito_phagostimulation/
 ├── notebooks/             # Jupyter/R Markdown/Quarto notebooks
 ├── metadata/              # Sample metadata, experimental design
 └── logs/                  # Pipeline logs and error outputs
-''
+```
 
 #Steps of pipeline
 
