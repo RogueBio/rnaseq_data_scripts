@@ -1,4 +1,4 @@
-# rnaseq_data_scripts
+# mosquito_phagostimulants
 
 Pipeline to run transcriptomic analysis of an experiment where _Anopheles coluzzii_ mosquitoes were fed three phagostimulant meals, to determine the neuromodulatory mechanisms, chemosensory gene activity, neuropeptide regulation, and early transport gut mechanisms. Summarising pre-ingestive and immediate post-contact events.
 
@@ -9,14 +9,14 @@ Pipeline to run transcriptomic analysis of an experiment where _Anopheles coluzz
 
 All commands were submitted from the project-specific directory:
 
-  ProjDir=/home/aa0377h/project_directories/strawberry_mildew
+  ProjDir=/home/ar9416e/mosquito_phagostimulants/
   mkdir -p $ProjDir
   cd $ProjDir
 
 Project directory:
 
 ```text
-mosquito_phagostimulation/
+mosquito_phagostimulants/
 │
 ├── raw_data/              # Original FASTQ files (read-only)
 ├── qc_reports/            # FastQC, MultiQC reports
