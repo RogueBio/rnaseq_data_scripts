@@ -141,6 +141,30 @@ done
 ```
 ## Importing transcript abundance with tximport
 
+library(tximport)
+library(DESeq2)
+
+# List of quant.sf files
+samples <- c("sample1", "sample2", "sample3")
+files <- file.path("path/to/output", paste0(samples, "_quant"), "quant.sf")
+names(files) <- samples
+
+tx2gene <- read.csv("path/to/tx2gene.csv")  # Columns: transcript_id, gene_id
+txi <- tximport(files, type = "salmon", tx2gene = tx2gene)
+
+sampleTable <- data.frame(condition = c("ctrl", "ctrl", "treated"))
+rownames(sampleTable) <- samples
+
+dds <- DESeqDataSetFromTximport(txi, colData = sampleTable, design = ~condition)
+dds <- DESeq(dds)
+
+res <- results(dds)
+
+library(GenomicFeatures)
+txdb <- makeTxDbFromGFF("your_annotation.gtf")
+tx2gene <- select(txdb, keys(txdb, "TXNAME"), "GENEID", "TXNAME")
+
+
 ##On R:
 
 library(tximport)
