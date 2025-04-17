@@ -31,4 +31,5 @@ mosquito_phagostimulation/
 2) Loop iterating through same read files, then running trimmomatic.sh script to submit the job to SLURM to use trimmomatic (http://www.usadellab.org/cms/?page=trimmomatic). The specifications use were:
 3) Loop iterating through the trimmed files to submit to fastqc to check again
 4) Alignment using Salmon: As opposed to simple counts, can correct for positional bias -l A (run automatically), for paired read -1 and -2 represent each of the pairs
-5) I'm working from the cluster :)
+5) DESeq sample conversion from Salmon output
+6) DESeq
