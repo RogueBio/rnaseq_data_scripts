@@ -5,6 +5,14 @@ Pipeline to run transcriptomic analysis of an experiment where _Anopheles coluzz
 * Sample types: Heads (n=10) and Guts (n=40)
 * For each sample type, conditions: Blood-fed (n=4 replicates), Mix Feeding Solution fed (MFS) (n=4 replicates), MFS + HMBPP (n=4 replicates), and MFS + ATP (n=4 replicates)
 
+ ## Data organisation
+
+All commands were submitted from the project-specific directory:
+
+  ProjDir=/home/aa0377h/project_directories/strawberry_mildew
+  mkdir -p $ProjDir
+  cd $ProjDir
+
 Project directory:
 
 ```text
