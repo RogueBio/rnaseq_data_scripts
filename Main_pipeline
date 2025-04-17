@@ -27,7 +27,7 @@ done
 ```
 
 ## Trimming with Trimmomatic
-
+```
 # Directory containing the raw data
 RAW_DATA_DIR="raw_data path"
 
@@ -50,9 +50,9 @@ for fastq_file in $fastq_files; do
            --job-name="trimm$filename" \
            "$trimm_dir/trimmomatic.sh"
 done
-
+```
 ## FastQC of trimmed reads
-
+```
 # Directory containing the trimmed data
 TRIM_DATA_DIR="trimmed data path"
 
@@ -75,9 +75,9 @@ for fastq_file in $fastq_files; do
            --job-name="fastqc_$filename" \
            "$fastqc_dir/fastqc.sh"
 done
-
+```
 ## Salmon Alignment
-
+```
 ##Generating a decoy-aware transcriptome
 
 # Directory containing the reference genome 
@@ -100,9 +100,9 @@ head decoys.txt
 
 #Combine the transcripts and genome file, in this order!
 cat transcripts_dir/transcripts.fa.gz ref_genome_dir/refgenome.fa.gz > trans_and_gen.fa.gz
-
+```
 #Run salmon index from decoy and transcript/genome file
-
+```
 sbatch --export=transcriptome="trans_and_gen.fa.gz",decoy_file="decoys.txt",index_dir="AGAM_PEST_salmon_index" \
        --job-name="salmon_indexing" \
        "$your_script_dir/salmon_decoy_generation.sh"
@@ -138,7 +138,7 @@ echo "Submitting job for sample ${base_filename}"
     sbatch --export=ALL,salmon_index="${salmon_index}",r1_file="${r1_file}",r2_file="${r2_file}",sample_name="${base_filename}",output_dir="${SALMON_OUT_DIR}" \
         salmon_alignment.sh
 done
-
+```
 ## Importing transcript abundance with tximport
 
 ##On R:
