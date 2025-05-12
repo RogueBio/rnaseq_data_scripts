@@ -1,52 +1,68 @@
 #!/bin/bash
 #SBATCH --partition=cpu-standard
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=50G
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH --time=01:00:00
+#SBATCH --array=0
+#SBATCH --job-name=trimmomatic_array
+#SBATCH --output=logs/trim_%A_%a.log
 
-# Load modules required for script commands
-module load java 
-module load trimmomatic-0.39.jar
+# Load required modules
+module load java
 
-# Ensure variables are defined
-if [[ -z "$fastq_file" || -z "$output_dir" ]]; then
-  echo "Error: fastq_file and output_dir must be provided."
-  exit 1
-fi
+# Path to Trimmomatic JAR
+TRIMMOMATIC_JAR="/path/to/trimmomatic-0.39.jar"  # <-- UPDATE THIS
 
-# Input and output file names
-input_file="$fastq_file"
-base_filename=$(basename "$fastq_file" .fastq)  # Extract base name without extension
-output_paired="${output_dir}/${base_filename}_paired.fastq.gz"
-output_unpaired="${output_dir}/${base_filename}_unpaired.fastq.gz"
-trim_log="${output_dir}/${base_filename}_trim.log"  # Log file path
+# Adapter file (must be accessible and valid)
+adapter_file="/path/to/adapters.fa"  # <-- UPDATE THIS
 
-# Set adapter file path (you need to specify this)
-adapter_file=<path_to_adapter_file>  # Replace with the actual path to adapter FASTA file
+# Check adapter file exists
 if [[ ! -f "$adapter_file" ]]; then
-  echo "Error: Adapter file not found at $adapter_file."
+  echo "❌ Error: Adapter file not found at $adapter_file"
   exit 1
 fi
 
-## I need to work out some metrics for this:
-# I need to know if I must remove adapters, if so, I must run ILLUMINACLIP: <Pathtofastaqithadapters>:<max mismatch count which 
-#will still allow ful matchseed mismatches>:<EITHER thereshold palindromeclip>:<OR simpleclip>
-#I'm going to assume adapters in a random file and simple clip
+# Get sample directory from array task ID
+sample_dir=$(sed -n "$((SLURM_ARRAY_TASK_ID+1))p" sample_list.txt)
+sample_name=$(basename "$sample_dir")
 
-java -jar <pathtotrimmomatic.jar> PE \
--threads 6 \
--phred33 \
-"$input_file" "${input_file}" \
-"$output_paired" "$output_unpaired" \
-ILLUMINACLIP:"$adapter_file":2:30:10 MINLEN:36 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 \
+# Identify R1 and R2
+R1=$(find "$sample_dir" -name '*_R1.fastq.gz')
+R2=$(find "$sample_dir" -name '*_R2.fastq.gz')
+
+if [[ -z "$R1" || -z "$R2" ]]; then
+  echo "❌ Error: Could not find R1 or R2 for $sample_name"
+  exit 1
+fi
+
+# Output directory
+output_dir="trimmed/${sample_name}"
+mkdir -p "$output_dir"
+
+# Output file names
+base=$(basename "$R1" _R1.fastq.gz)
+paired_fwd="${output_dir}/${base}_R1_paired.fastq.gz"
+unpaired_fwd="${output_dir}/${base}_R1_unpaired.fastq.gz"
+paired_rev="${output_dir}/${base}_R2_paired.fastq.gz"
+unpaired_rev="${output_dir}/${base}_R2_unpaired.fastq.gz"
+trim_log="${output_dir}/${base}_trim.log"
+
+# Run Trimmomatic
+echo "🔧 Running Trimmomatic for sample: $sample_name"
+java -jar "$TRIMMOMATIC_JAR" PE \
+  -threads "$SLURM_CPUS_PER_TASK" \
+  -phred33 \
+  "$R1" "$R2" \
+  "$paired_fwd" "$unpaired_fwd" \
+  "$paired_rev" "$unpaired_rev" \
+  ILLUMINACLIP:"$adapter_file":2:30:10 \
+  LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 \
   -trimlog "$trim_log"
 
-# Check if Trimmomatic ran successfully
+# Check status
 if [[ $? -eq 0 ]]; then
-  echo "Trimmomatic completed successfully for $input_file."
+  echo "✅ Trimmomatic completed successfully for $sample_name"
 else
-  echo "Error: Trimmomatic failed for $input_file."
+  echo "❌ Trimmomatic failed for $sample_name"
   exit 1
 fi
-
