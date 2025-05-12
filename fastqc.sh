@@ -1,22 +1,19 @@
 #!/bin/bash
 #SBATCH --partition=cpu-standard
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=50G
-#SBATCH --time=02:00:00
+#SBATCH --mem=8G
+#SBATCH --time=01:00:00
 #SBATCH --job-name=fastqc_rerun
+#SBATCH --output=fastqc_%j.log
 
-# Load modules required for script commands
 module load FastQC/0.12.1-Java-17 
 
-# Check if variables are passed correctly
 if [ -z "$fastq_file" ] || [ ! -f "$fastq_file" ]; then
-    echo "Error: FASTQ file '$fastq_file' is either not set or does not exist."
+    echo "Error: FASTQ file '$fastq_file' not found."
     exit 1
 fi
 
-# Run FASTQC
-fastqc -o "$output_dir" "$fastq_file"
+mkdir -p "$output_dir"
 
-# Archive the results in the output directory
-cd "$output_dir"
-zip -r "fastqc_reports_${SLURM_JOB_ID}.zip" *.html *.zip
+# Run FastQC using all allocated threads
+fastqc --threads "$SLURM_CPUS_PER_TASK" -o "$output_dir" "$fastq_file"
