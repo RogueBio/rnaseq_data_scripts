@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Directory containing the raw data
-raw_data_dir="Manuela Data/220211_A00181_0425_BHVMJNDSX2"
-
+export raw_data_dir="Manuela Data/220211_A00181_0425_BHVMJNDSX2"
+ls "$raw_data_dir"
 # Set Internal Field Separator (IFS) to newline to handle filenames with spaces
 IFS=$'\n'
 
