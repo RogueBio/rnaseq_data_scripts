@@ -1,20 +1,21 @@
 #!/bin/bash
 
-RAW_DATA_DIR=Data_for_tests/220211_A00181_0425_BHVMJNDSX2
+# Directory containing the raw data
+raw_data_dir="Manuela Data/220211_A00181_0425_BHVMJNDSX2"
 
-fastq_files=$(find "$RAW_DATA_DIR" -type f \( -iname "*.fastq" -o -iname "*.fastq.gz" -o -iname "*.fq" -o -iname "*.fq.gz" \))
+# Set Internal Field Separator (IFS) to newline to handle filenames with spaces
+IFS=$'\n'
 
-for fastq_file in $fastq_files; do
-    filename=$(basename "$fastq_file")
+# Find all .fastq files in the raw_data directory and its subdirectories
+fastq_files=($(find "$raw_data_dir" -type f \( -iname "*.fastq" -o -iname "*.fastq.gz" -o -iname "*.fq" -o -iname "*.fq.gz" \)))
 
-    echo "Would submit job for: $filename"
-    echo "Full path: $fastq_file"
-    echo "Job name: fastqc_${filename%.*}"
-    echo "---"
-done
+# Write them to a file
+printf "%s\n" "${fastq_files[@]}" > fastq_files
 
-## To remove all files outputted from sbatch is
+# Output the number of files found
+echo "Found ${#fastq_files[@]} FASTQ files."
 
-rm -rf *.out 
-
-
+# Submit the SLURM job array
+num_files=${#fastq_files[@]}
+echo "Submitting job array for $num_files files..."
+sbatch --array=0-$(($num_files - 1)) git_repos/rnaseq_data_scripts/fastqc_array.sh
