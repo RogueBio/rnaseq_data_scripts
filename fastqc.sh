@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --partition=cpu-standard
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=4
 #SBATCH --mem=50G
+#SBATCH --time=02:00:00
+#SBATCH --job-name=fastqc_rerun
 
 # Load modules required for script commands
 module load FastQC/0.12.1-Java-17 
