@@ -61,8 +61,4 @@ printf "%s\n" "${sample_dirs[@]}" > sample_list.txt
 # Report count
 echo "Found ${#sample_dirs[@]} paired-end samples."
 
-# Get the number of samples dynamically
-num_samples=$(wc -l < sample_list.txt)
 
-# Submit the SLURM job array with the correct number of tasks
-sbatch --array=0-$(($num_samples - 1)) git_repos/rnaseq_data_scripts/trimmomatic.sh
