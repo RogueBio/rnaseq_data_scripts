@@ -42,8 +42,8 @@ echo "Found ${#fastq_files[@]} FASTQ files."
 # Find all paired .fastq files in the raw_data directory and its subdirectories
 
 # Check for both R1 and R2 FASTQ files with updated pattern
-R1_files=($(find "$raw_data_dir" -type f -name '*R1_*.fastq.gz'))
-R2_files=($(find "$raw_data_dir" -type f -name '*R2_*.fastq.gz'))
+R1_files=($(find "$raw_data_dir" -type f -name '*R1*.fastq.gz'))
+R2_files=($(find "$raw_data_dir" -type f -name '*R2*.fastq.gz'))
 num_files=${#R1_files[@]}
 
 # Debugging: print R1 and R2 filenames found
