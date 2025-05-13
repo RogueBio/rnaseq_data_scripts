@@ -26,45 +26,35 @@ sbatch --array=0-$(($num_files - 1)) git_repos/rnaseq_data_scripts/fastqc_array.
 ## Step 2: Trimming with Trimmomatic
 
 # Set raw data directory
-raw_data_dir="Manuela Data/220211_A00181_0425_BHVMJNDSX2"
+export raw_data_dir="Manuela Data/220211_A00181_0425_BHVMJNDSX2"
+ls "$raw_data_dir"
 
 # Use newline separator
 IFS=$'\n'
 
-# Initialize sample_dirs array
-sample_dirs=()
+# Find all .fastq files in the raw_data directory and its subdirectories
+fastq_files=($(find "$raw_data_dir" -type f \( -iname "*.fastq" -o -iname "*.fastq.gz" -o -iname "*.fq" -o -iname "*.fq.gz" \)))
 
-# Loop through immediate subdirectories
-for dir in "$raw_data_dir"/Sample_*; do
-  # Make sure it's a directory
-  [[ -d "$dir" ]] || continue
+# Output the number of files found
+echo "Found ${#fastq_files[@]} FASTQ files."
 
-  # Debugging: print the directory being checked
-  echo "Checking directory: $dir"
+# Find all paired .fastq files in the raw_data directory and its subdirectories
 
-  # Check for both R1 and R2 FASTQ files with updated pattern
-  R1=$(find "$dir" -maxdepth 1 -name '*R1_*.fastq.gz' | head -n 1)
-  R2=$(find "$dir" -maxdepth 1 -name '*R2_*.fastq.gz' | head -n 1)
+# Check for both R1 and R2 FASTQ files with updated pattern
+R1_files=($(find "$raw_data_dir" -maxdepth 1 -name '*R1_*.fastq.gz'))
+R2_files=($(find "$raw_data_dir" -maxdepth 1 -name '*R2_*.fastq.gz'))
+num_files=${#R1_files[@]}
 
-  # Debugging: print R1 and R2 filenames found
-  echo "Found R1: $R1"
-  echo "Found R2: $R2"
+# Debugging: print R1 and R2 filenames found
+echo "Found R1: $R1"
+echo "Found R2: $R2"
 
-  if [[ -n "$R1" && -n "$R2" ]]; then
-    sample_dirs+=("$dir")
-  fi
-done
+# Submit the SLURM job array for paired files
+num_files=${#R1_files[@]}
+echo "Submitting job array for $num_files paired files..."
+sbatch --array=0-$(($num_files - 1)) git_repos/rnaseq_data_scripts/trimmomatic.array.sh
 
-# Write to sample_list.txt
-printf "%s\n" "${sample_dirs[@]}" > sample_list.txt
 
-# Report count
-echo "Found ${#sample_dirs[@]} paired-end samples."
-
-while IFS= read -r sample_dir; do
-  echo "Submitting Trimmomatic job for $sample_dir"
-  sbatch git_repos/rnaseq_data_scripts/trimmomatic.sh "$sample_dir" >> submission_log.txt
-done < sample_list.txt
 
 
 
