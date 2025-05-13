@@ -29,8 +29,8 @@ fi
 sample_name=$(basename "$sample_dir")
 
 # Find R1 and R2
-R1=$(find "$sample_dir" -maxdepth 1 -name '*R1*.fastq.gz' | head -n 1)
-R2=$(find "$sample_dir" -maxdepth 1 -name '*R2*.fastq.gz' | head -n 1)
+R1=$(find "$sample_dir" -maxdepth 1 -name '*R1*001.fastq.gz' | head -n 1)
+R2=$(find "$sample_dir" -maxdepth 1 -name '*R2*001.fastq.gz' | head -n 1)
 
 if [[ -z "$R1" || -z "$R2" ]]; then
   echo "Error: Could not find R1 or R2 for $sample_name"
