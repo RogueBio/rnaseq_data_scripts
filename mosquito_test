@@ -23,6 +23,7 @@ num_files=${#fastq_files[@]}
 echo "Submitting job array for $num_files files..."
 sbatch --array=0-$(($num_files - 1)) git_repos/rnaseq_data_scripts/fastqc_array.sh
 
+
 ## Step 2: Trimming with Trimmomatic
 
 # Set raw data directory
@@ -41,13 +42,13 @@ echo "Found ${#fastq_files[@]} FASTQ files."
 # Find all paired .fastq files in the raw_data directory and its subdirectories
 
 # Check for both R1 and R2 FASTQ files with updated pattern
-R1_files=($(find "$raw_data_dir" -maxdepth 1 -name '*R1_*.fastq.gz'))
-R2_files=($(find "$raw_data_dir" -maxdepth 1 -name '*R2_*.fastq.gz'))
+R1_files=($(find "$raw_data_dir" -type f -name '*R1_*.fastq.gz'))
+R2_files=($(find "$raw_data_dir" -type f -name '*R2_*.fastq.gz'))
 num_files=${#R1_files[@]}
 
 # Debugging: print R1 and R2 filenames found
-echo "Found R1: $R1"
-echo "Found R2: $R2"
+echo "Number of R1 files: ${#R1_files[@]}"
+echo "Number of R2 files: ${#R2_files[@]}"
 
 # Submit the SLURM job array for paired files
 num_files=${#R1_files[@]}
