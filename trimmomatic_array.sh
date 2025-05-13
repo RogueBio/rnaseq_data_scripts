@@ -21,9 +21,10 @@ if [[ ! -f "$adapter_file" ]]; then
 fi
 
 # Setup directories
-raw_data_dir="/home/ar9416e/Manuela Data/220211_A00181_0425_BHVMJNDSX2"  # Fixed path
+raw_data_dir="/home/ar9416e/temperature_samples/220211_A00181_0425_BHVMJNDSX2/"  # Fixed path
 output_dir="/home/ar9416e/mosquito_test/trimmed_reads"
 mkdir -p "$output_dir"
+mkdir -p logs
 
 # Find all R1 and R2 fastq.gz files
 R1_files=($(find "$raw_data_dir" -type f -name '*R1_*.fastq.gz'))
@@ -44,4 +45,39 @@ echo "R2 file selected: $R2"
 
 # Extract the base name for the sample (without R1 or R2 part)
 base=$(basename "$R1" _R1.fastq.gz)
-echo
+
+# Define output file paths
+output_R1_paired="${output_dir}/${base}_R1_paired.fastq.gz"
+output_R1_unpaired="${output_dir}/${base}_R1_unpaired.fastq.gz"
+output_R2_paired="${output_dir}/${base}_R2_paired.fastq.gz"
+output_R2_unpaired="${output_dir}/${base}_R2_unpaired.fastq.gz"
+trim_log="${output_dir}/${base}_trim_log.txt"
+
+# Output for debugging
+echo "Output files:"
+echo "$output_R1_paired"
+echo "$output_R1_unpaired"
+echo "$output_R2_paired"
+echo "$output_R2_unpaired"
+echo "$trim_log"
+
+# Run Trimmomatic
+echo "Running Trimmomatic for sample: $base"
+java -jar /opt/software/eb/software/Trimmomatic/0.39-Java-17/trimmomatic-0.39.jar \
+  PE \
+  -threads 4 \
+  -phred33 \
+  "$R1" "$R2" \
+  "$output_R1_paired" "$output_R1_unpaired" \
+  "$output_R2_paired" "$output_R2_unpaired" \
+  ILLUMINACLIP:/home/ar9416e/git_repos/Illumina_adapters/illumina_full_adapters.fa:2:30:10 \
+  LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 \
+  -trimlog "$trim_log"
+
+# Check for success or failure
+if [[ $? -eq 0 ]]; then
+  echo "Trimmomatic completed successfully for $base"
+else
+  echo "Trimmomatic failed for $base"
+  exit 1
+fi
