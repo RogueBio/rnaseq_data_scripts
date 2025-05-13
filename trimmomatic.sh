@@ -61,7 +61,7 @@ echo "Forward Read 2 (R2): $R2"
 echo "Output Directory: $output_dir"
 
 # Run Trimmomatic
-java -jar /path/to/trimmomatic-0.39.jar \
+java -jar /opt/software/eb/software/Trimmomatic/0.39-Java-17/trimmomatic-0.39.jar \
   -threads "$SLURM_CPUS_PER_TASK" \
   -phred33 \
   "$R1" "$R2" \
