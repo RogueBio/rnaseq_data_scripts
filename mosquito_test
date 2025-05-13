@@ -24,5 +24,42 @@ sbatch --array=0-$(($num_files - 1)) git_repos/rnaseq_data_scripts/fastqc_array.
 
 ## Step 2: Trimming with Trimmomatic
 
+# Set raw data directory
+raw_data_dir="Manuela Data/220211_A00181_0425_BHVMJNDSX2"
 
+# Use newline separator
+IFS=$'\n'
+
+# Initialize sample_dirs array
+sample_dirs=()
+
+# Loop through immediate subdirectories
+for dir in "$raw_data_dir"/Sample_*; do
+  # Make sure it's a directory
+  [[ -d "$dir" ]] || continue
+
+  # Debugging: print the directory being checked
+  echo "Checking directory: $dir"
+
+  # Check for both R1 and R2 FASTQ files with updated pattern
+  R1=$(find "$dir" -maxdepth 1 -name '*R1_*.fastq.gz' | head -n 1)
+  R2=$(find "$dir" -maxdepth 1 -name '*R2_*.fastq.gz' | head -n 1)
+
+  # Debugging: print R1 and R2 filenames found
+  echo "Found R1: $R1"
+  echo "Found R2: $R2"
+
+  if [[ -n "$R1" && -n "$R2" ]]; then
+    sample_dirs+=("$dir")
+  fi
+done
+
+# Write to sample_list.txt
+printf "%s\n" "${sample_dirs[@]}" > sample_list.txt
+
+# Report count
+echo "Found ${#sample_dirs[@]} paired-end samples."
+
+ # Submit the SLURM job array
+sbatch --array=0-36 git_repos/rnaseq_data_scripts/trimmomatic.sh
 
