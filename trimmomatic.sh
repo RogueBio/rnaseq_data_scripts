@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
 #SBATCH --time=01:00:00
-#SBATCH --array=0-31
+#SBATCH --array=0-36
 #SBATCH --job-name=trimmomatic_array
 #SBATCH --output=logs/trim_%A_%a.log
 
