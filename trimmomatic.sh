@@ -20,17 +20,21 @@ if [[ ! -f "$adapter_file" ]]; then
   exit 1
 fi
 
-# Get sample directory from array task ID
-sample_dir=$(sed -n "$((SLURM_ARRAY_TASK_ID + 1))p" sample_list.txt)
-sample_name=$(basename "$sample_dir")
+# Get sample directory from raw data dir
+sample_dir="/home/ar9416e/Manuela Data/220211_A00181_0425_BHVMJNDSX2/"
 
-echo "SLURM_ARRAY_TASK_ID: $SLURM_ARRAY_TASK_ID"
-echo "Sample directory: $sample_dir"
-echo "Sample name: $sample_name"
+# Extract sample folder name
+sample_name=$(basename "$(find "$sample_dir" -mindepth 1 -maxdepth 1 -type d | head -n 1)")
 
-# Identify R1 and R2
-R1=$(find "$sample_dir" -maxdepth 1 -name '*R1*.fastq.gz' | head -n 1)
-R2=$(find "$sample_dir" -maxdepth 1 -name '*R2*.fastq.gz' | head -n 1)
+# Ensure sample_name is not empty
+if [[ -z "$sample_name" ]]; then
+  echo "Error: No sample directory found in $sample_dir"
+  exit 1
+fi
+
+# Identify R1 and R2 inside the sample directory
+R1=$(find "$sample_dir/$sample_name" -maxdepth 1 -name '*R1*.fastq.gz' | head -n 1)
+R2=$(find "$sample_dir/$sample_name" -maxdepth 1 -name '*R2*.fastq.gz' | head -n 1)
 
 echo "Found R1: $R1"
 echo "Found R2: $R2"
