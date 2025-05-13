@@ -19,14 +19,20 @@ if [[ ! -f "$adapter_file" ]]; then
   echo "Error: Adapter file not found at $adapter_file"
   exit 1
 fi
-
 # Get sample directory from array task ID
 sample_dir=$(sed -n "$((SLURM_ARRAY_TASK_ID+1))p" sample_list.txt)
 sample_name=$(basename "$sample_dir")
 
+# Debugging
+echo "Sample directory: $sample_dir"
+
 # Identify R1 and R2
-R1=$(find "$dir" -maxdepth 1 -name '*R1_*.fastq.gz' | head -n 1)
-R2=$(find "$dir" -maxdepth 1 -name '*R2_*.fastq.gz' | head -n 1)
+R1=$(find "$sample_dir" -maxdepth 1 -name '*R1_*.fastq.gz' | head -n 1)
+R2=$(find "$sample_dir" -maxdepth 1 -name '*R2_*.fastq.gz' | head -n 1)
+
+# Debugging
+echo "R1 file: $R1"
+echo "R2 file: $R2"
 
 if [[ -z "$R1" || -z "$R2" ]]; then
   echo "Error: Could not find R1 or R2 for $sample_name"
@@ -35,6 +41,7 @@ fi
 
 # Output directory
 output_dir="/home/ar9416e/mosquito_test/trimmed_reads/trimmed/${sample_name}"
+mkdir -p "$output_dir"
 
 # Output file names
 base=$(basename "$R1" _R1.fastq.gz)
