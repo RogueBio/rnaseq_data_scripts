@@ -53,7 +53,7 @@ echo "Number of R2 files: ${#R2_files[@]}"
 # Submit the SLURM job array for paired files
 num_files=${#R1_files[@]}
 echo "Submitting job array for $num_files paired files..."
-sbatch --array=0-$(($num_files - 1)) git_repos/rnaseq_data_scripts/trimmomatic.array.sh
+sbatch --array=0-$(($num_files - 1)) git_repos/rnaseq_data_scripts/trimmomatic_array.sh
 
 
 
