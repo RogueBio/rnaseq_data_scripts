@@ -26,8 +26,8 @@ output_dir="/home/ar9416e/mosquito_test/trimmed_reads"
 mkdir -p "$output_dir"
 
 # Find all R1 and R2 fastq.gz files
-R1_files=($(find "$raw_data_dir" -maxdepth 1 -name '*R1_*.fastq.gz'))
-R2_files=($(find "$raw_data_dir" -maxdepth 1 -name '*R2_*.fastq.gz'))
+R1_files=($(find "$raw_data_dir" -type f -name '*R1_*.fastq.gz'))
+R2_files=($(find "$raw_data_dir" -type f -name '*R2_*.fastq.gz'))
 
 # Debugging: check number of files
 echo "Number of R1 files: ${#R1_files[@]}"
