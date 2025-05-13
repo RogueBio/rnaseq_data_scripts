@@ -20,38 +20,31 @@ if [[ ! -f "$adapter_file" ]]; then
   exit 1
 fi
 
-# Get sample directory from array task ID
-sample_dir=$(sed -n "$((SLURM_ARRAY_TASK_ID + 1))p" sample_list.txt)
-sample_name=$(basename "$sample_dir")
-
-echo "SLURM_ARRAY_TASK_ID: $SLURM_ARRAY_TASK_ID"
-echo "Sample directory: $sample_dir"
-echo "Sample name: $sample_name"
-
-# Identify R1 and R2
-R1=$(find "$sample_dir" -maxdepth 1 -name '*R1*.fastq.gz' | head -n 1)
-R2=$(find "$sample_dir" -maxdepth 1 -name '*R2*.fastq.gz' | head -n 1)
-
-echo "Found R1: $R1"
-echo "Found R2: $R2"
-
-if [[ -z "$R1" || -z "$R2" ]]; then
-  echo "Error: Could not find R1 or R2 for $sample_name"
-  exit 1
-fi
-
-# Output directory
-output_dir="/home/ar9416e/mosquito_test/trimmed_reads/trimmed/${sample_name}"
+# Setup directories
+raw_data_dir="/home/ar9416e/Manuela Data/220211_A00181_0425_BHVMJNDSX2"  # Fixed path
+output_dir="/home/ar9416e/mosquito_test/trimmed_reads"
 mkdir -p "$output_dir"
 
-# Output file names
+# Find all R1 and R2 fastq.gz files
+R1_files=($(find "$raw_data_dir" -maxdepth 1 -name '*R1_*.fastq.gz'))
+R2_files=($(find "$raw_data_dir" -maxdepth 1 -name '*R2_*.fastq.gz'))
+
+# Get the index from SLURM_ARRAY_TASK_ID to select corresponding R1 and R2 files
+R1=${R1_files[$SLURM_ARRAY_TASK_ID]}
+R2=${R2_files[$SLURM_ARRAY_TASK_ID]}
+
+# Extract the base name for the sample (without R1 or R2 part)
 base=$(basename "$R1" _R1.fastq.gz)
+sample_name="$base"
+
+# Define output file paths
 paired_fwd="${output_dir}/${base}_R1_paired.fastq.gz"
 unpaired_fwd="${output_dir}/${base}_R1_unpaired.fastq.gz"
 paired_rev="${output_dir}/${base}_R2_paired.fastq.gz"
 unpaired_rev="${output_dir}/${base}_R2_unpaired.fastq.gz"
 trim_log="${output_dir}/${base}_trim.log"
 
+# Output file names for debugging
 echo "Output files:"
 echo "$paired_fwd"
 echo "$unpaired_fwd"
@@ -71,6 +64,7 @@ java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar \
   LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 \
   -trimlog "$trim_log"
 
+# Check for success or failure
 if [[ $? -eq 0 ]]; then
   echo "Trimmomatic completed successfully for $sample_name"
 else
