@@ -61,4 +61,10 @@ printf "%s\n" "${sample_dirs[@]}" > sample_list.txt
 # Report count
 echo "Found ${#sample_dirs[@]} paired-end samples."
 
+while IFS= read -r sample_dir; do
+  echo "Submitting Trimmomatic job for $sample_dir"
+  sbatch git_repos/rnaseq_data_scripts/trimmomatic.sh "$sample_dir" >> submission_log.txt
+done < sample_list.txt
+
+
 
