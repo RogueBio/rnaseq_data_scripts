@@ -25,8 +25,8 @@ sample_dir=$(sed -n "$((SLURM_ARRAY_TASK_ID+1))p" sample_list.txt)
 sample_name=$(basename "$sample_dir")
 
 # Identify R1 and R2
-R1=$(find "$sample_dir" -name '*_R1.fastq.gz')
-R2=$(find "$sample_dir" -name '*_R2.fastq.gz')
+R1=$(find "$dir" -maxdepth 1 -name '*R1_*.fastq.gz' | head -n 1)
+R2=$(find "$dir" -maxdepth 1 -name '*R2_*.fastq.gz' | head -n 1)
 
 if [[ -z "$R1" || -z "$R2" ]]; then
   echo "Error: Could not find R1 or R2 for $sample_name"
@@ -34,8 +34,7 @@ if [[ -z "$R1" || -z "$R2" ]]; then
 fi
 
 # Output directory
-output_dir="trimmed/${sample_name}"
-mkdir -p "$output_dir"
+output_dir="/home/ar9416e/mosquito_test/trimmed_reads/trimmed/${sample_name}"
 
 # Output file names
 base=$(basename "$R1" _R1.fastq.gz)
