@@ -3,22 +3,20 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
 #SBATCH --time=01:00:00
-#SBATCH --array=0
+#SBATCH --array=0-71
 #SBATCH --job-name=trimmomatic_array
 #SBATCH --output=logs/trim_%A_%a.log
 
 # Load required modules
-module load java
+module load Java/17.0.6
+module load Trimmomatic/0.39-Java-17
 
-# Path to Trimmomatic JAR
-TRIMMOMATIC_JAR="/path/to/trimmomatic-0.39.jar"  # <-- UPDATE THIS
-
-# Adapter file (must be accessible and valid)
-adapter_file="/path/to/adapters.fa"  # <-- UPDATE THIS
+# Adapter file 
+adapter_file="$HOME/git_repos/Illumina_adapters/illumina_full_adapters.fa" 
 
 # Check adapter file exists
 if [[ ! -f "$adapter_file" ]]; then
-  echo "❌ Error: Adapter file not found at $adapter_file"
+  echo "Error: Adapter file not found at $adapter_file"
   exit 1
 fi
 
@@ -31,7 +29,7 @@ R1=$(find "$sample_dir" -name '*_R1.fastq.gz')
 R2=$(find "$sample_dir" -name '*_R2.fastq.gz')
 
 if [[ -z "$R1" || -z "$R2" ]]; then
-  echo "❌ Error: Could not find R1 or R2 for $sample_name"
+  echo "Error: Could not find R1 or R2 for $sample_name"
   exit 1
 fi
 
@@ -48,8 +46,8 @@ unpaired_rev="${output_dir}/${base}_R2_unpaired.fastq.gz"
 trim_log="${output_dir}/${base}_trim.log"
 
 # Run Trimmomatic
-echo "🔧 Running Trimmomatic for sample: $sample_name"
-java -jar "$TRIMMOMATIC_JAR" PE \
+echo "Running Trimmomatic for sample: $sample_name"
+java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar \
   -threads "$SLURM_CPUS_PER_TASK" \
   -phred33 \
   "$R1" "$R2" \
@@ -61,8 +59,8 @@ java -jar "$TRIMMOMATIC_JAR" PE \
 
 # Check status
 if [[ $? -eq 0 ]]; then
-  echo "✅ Trimmomatic completed successfully for $sample_name"
+  echo "Trimmomatic completed successfully for $sample_name"
 else
-  echo "❌ Trimmomatic failed for $sample_name"
+  echo "Trimmomatic failed for $sample_name"
   exit 1
 fi
