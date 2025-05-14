@@ -88,7 +88,7 @@ ref_genome_dir="/home/ar9416e/git_repos/Reference_genome"
 transcripts_dir="/home/ar9416e/git_repos/Reference_genome"
 
 # Extract chromosome information from the genome file to make the decoys.txt file
-grep "^>" <(gunzip -c "$ref_genome_dir/VectorBase-68_AgambiaePEST_Genome.fasta") | cut -d " " -f 1 > decoys.txt
+grep "^>" "$ref_genome_dir/VectorBase-68_AgambiaePEST_Genome.fasta" | cut -d " " -f 1 > decoys.txt
 
 # Check
 head decoys.txt
@@ -100,10 +100,10 @@ sed -i.bak -e 's/>//g' decoys.txt
 head decoys.txt
 
 # Combine the transcripts and genome file, in this order!
-cat "$transcripts_dir/VectorBase-68_AgambiaePEST_AnnotatedTranscripts.fasta" "$ref_genome_dir/VectorBase-68_AgambiaePEST_Genome.fasta.gz" > trans_and_gen.fa.gz
+cat "$transcripts_dir/VectorBase-68_AgambiaePEST_AnnotatedTranscripts.fasta" "$ref_genome_dir/VectorBase-68_AgambiaePEST_Genome.fasta" > trans_and_gen.fa.gz
 
 # Load required modules
-module load salmon
+module load Salmon/1.10.1-GCC-12.3.0
 module load gzip
 
 # Set desired output directory
