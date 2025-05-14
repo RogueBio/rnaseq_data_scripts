@@ -6,6 +6,7 @@
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=40G
 #SBATCH --time=04:00:00
+#SBATCH --array=0-$(($num_files - 1))
 #SBATCH --output=logs/salmon_%x_%j.out
 #SBATCH --error=logs/salmon_%x_%j.err
 
@@ -14,9 +15,11 @@
 
 # Get variables passed via sbatch or environment
 salmon_index="$salmon_index"
-R1="$R1"
-R2="$R2"
 output_dir="/home/ar9416e/mosquito_test/alignments"
+
+# Get the correct input files based on the array task ID
+R1="${R1_files[$SLURM_ARRAY_TASK_ID]}"
+R2="${R2_files[$SLURM_ARRAY_TASK_ID]}"
 
 # Extract base filename from R2 file
 base_filename=$(basename "$R2")
@@ -40,4 +43,3 @@ else
     echo "Error: Salmon failed for ${sample_name}. Check logs for details."
     exit 1
 fi
-
