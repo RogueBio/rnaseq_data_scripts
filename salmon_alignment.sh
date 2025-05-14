@@ -14,7 +14,7 @@
 # module load salmon
 
 # Get variables passed via sbatch or environment
-salmon_index="$salmon_index"
+salmon_index="/home/ar9416e/mosquito_test/alignments/salmon_index"
 output_dir="/home/ar9416e/mosquito_test/alignments"
 
 # Get the correct input files based on the array task ID
