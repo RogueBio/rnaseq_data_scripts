@@ -14,8 +14,8 @@
 
 # Get variables passed via sbatch or environment
 salmon_index="$salmon_index"
-r1_file="$R1"
-r2_file="$R2"
+R1="$R1"
+R2="$R2"
 output_dir="/home/ar9416e/mosquito_test/alignments"
 
 # Extract base filename from R2 file
