@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=40G
 #SBATCH --time=04:00:00
-#SBATCH --array=0-$(($num_files - 1))
+#SBATCH --array=0-50
 #SBATCH --output=logs/salmon_%x_%j.out
 #SBATCH --error=logs/salmon_%x_%j.err
 
