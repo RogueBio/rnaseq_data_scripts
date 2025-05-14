@@ -77,6 +77,82 @@ num_files=${#fastq_files[@]}
 echo "Submitting job array for $num_files files..."
 sbatch --array=0-$(($num_files - 1)) git_repos/rnaseq_data_scripts/fastqc_array.sh
 
+## Step 4: Salmon Alignment
+
+## 4.1. Generating a decoy-aware transcriptome
+
+# Directory containing the reference genome 
+ref_genome_dir="/home/ar9416e/git_repos/Reference_genome"
+
+# Directory containing the reference transcripts data
+transcripts_dir="/home/ar9416e/git_repos/Reference_genome"
+
+# Extract chromosome information from the genome file to make the decoys.txt file
+grep "^>" <(gunzip -c "$ref_genome_dir/VectorBase-68_AgambiaePEST_Genome.fasta.gz") | cut -d " " -f 1 > decoys.txt
+
+# Check
+head decoys.txt
+
+# Remove the > symbol from the file
+sed -i.bak -e 's/>//g' decoys.txt
+
+# Check
+head decoys.txt
+
+# Combine the transcripts and genome file, in this order!
+cat "$transcripts_dir/VectorBase-68_AgambiaePEST_AnnotatedTranscripts.fasta" "$ref_genome_dir/VectorBase-68_AgambiaePEST_Genome.fasta.gz" > trans_and_gen.fa.gz
+
+# Load required modules
+module load salmon
+module load gzip
+
+# Set desired output directory
+index_dir="/home/ar9416e/mosquito_test/alignments/salmon_index"
+
+# Create it if it doesn't exist
+mkdir -p "$index_dir"
+
+# Run salmon index with decoy-aware transcriptome
+salmon index -t trans_and_gen.fa.gz -d decoys.txt -p 30 -i "$index_dir"
+
+
+
+
+
+
+
+#Run alignment with Salmon
+
+#Set path to salmon index
+
+salmon_index = "salmon index file/AGAM_PEST_salmon_index" 
+
+#Trimmed fastq file folder
+
+TRIM_DATA_DIR="trimmed data path"
+
+#Loop through directories within the fastq folder (here SRR should be changed to whatever naming system my files will have)
+
+for dir in ${TRIM_DATA_DIR}"/SRR*;do 
+
+#Find R1 and R2 files
+
+r1_file = $(find "$dir" -name"*_1.fastq.gz")
+r2_file=$(find "$dir" -name"*_2.fastq.gz")
+
+#Extract sample name
+
+base_filename=$(basename "$dir")
+
+#Run salmon alignment 
+
+echo "Submitting job for sample ${base_filename}"
+    
+    # Submit sbatch job for Salmon alignment
+    sbatch --export=ALL,salmon_index="${salmon_index}",r1_file="${r1_file}",r2_file="${r2_file}",sample_name="${base_filename}",output_dir="${SALMON_OUT_DIR}" \
+        salmon_alignment.sh
+done
+
 
 
 
