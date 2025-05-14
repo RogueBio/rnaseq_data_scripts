@@ -88,7 +88,7 @@ ref_genome_dir="/home/ar9416e/git_repos/Reference_genome"
 transcripts_dir="/home/ar9416e/git_repos/Reference_genome"
 
 # Extract chromosome information from the genome file to make the decoys.txt file
-grep "^>" <(gunzip -c "$ref_genome_dir/VectorBase-68_AgambiaePEST_Genome.fasta.gz") | cut -d " " -f 1 > decoys.txt
+grep "^>" <(gunzip -c "$ref_genome_dir/VectorBase-68_AgambiaePEST_Genome.fasta") | cut -d " " -f 1 > decoys.txt
 
 # Check
 head decoys.txt
