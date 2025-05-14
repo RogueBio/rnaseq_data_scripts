@@ -14,7 +14,7 @@
 # module load salmon
 
 # Get variables passed via sbatch or environment
-salmon_index="/home/ar9416e/mosquito_test/alignments/
+salmon_index="/home/ar9416e/mosquito_test/alignments/salmon_index"
 output_dir="/home/ar9416e/mosquito_test/alignments"
 
 # Get the correct input files based on the array task ID
@@ -29,7 +29,7 @@ sample_name="${base_filename%%_S*}"
 
 # Run salmon
 echo "Processing sample ${sample_name}"
-salmon quant -i "$salmon_index" -l A \
+salmon quant -i "/home/ar9416e/mosquito_test/alignments/salmon_index" -l A \
   -1 "$R1" \
   -2 "$R2" \
   -p 6 \
