@@ -13,13 +13,21 @@
 # Load Salmon module if needed
 # module load salmon
 
-# Get variables passed via sbatch or environment
+# Define index and output directory
 salmon_index="/home/ar9416e/mosquito_test/alignments/salmon_index"
 output_dir="/home/ar9416e/mosquito_test/alignments"
+
+# Define read file arrays
+R1_files=(/home/ar9416e/mosquito_test/trimmed_reads/*_R1_paired.fastq.gz)
+R2_files=(/home/ar9416e/mosquito_test/trimmed_reads/*_R2_paired.fastq.gz)
 
 # Get the correct input files based on the array task ID
 R1="${R1_files[$SLURM_ARRAY_TASK_ID]}"
 R2="${R2_files[$SLURM_ARRAY_TASK_ID]}"
+
+# Debugging: Print file paths to verify correct assignment
+echo "Using files: $R1 and $R2"
+ls -l "$R1" "$R2"
 
 # Extract base filename from R2 file
 base_filename=$(basename "$R2")
@@ -27,9 +35,9 @@ base_filename=$(basename "$R2")
 # Extract sample name from base filename (up to _S, adjust if needed)
 sample_name="${base_filename%%_S*}"
 
-# Run salmon
+# Run Salmon
 echo "Processing sample ${sample_name}"
-salmon quant -i "/home/ar9416e/mosquito_test/alignments/salmon_index" -l A \
+salmon quant -i "$salmon_index" -l A \
   -1 "$R1" \
   -2 "$R2" \
   -p 6 \
