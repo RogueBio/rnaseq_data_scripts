@@ -125,20 +125,14 @@ salmon_index = "/home/ar9416e/mosquito_test/alignments/salmon_index"
 
 TRIM_DATA_DIR="/home/ar9416e/mosquito_test/trimmed_reads"
 
-# Initialize variables for R1 and R2 files
-R1=""
-R2=""
+# Check for both R1 and R2 FASTQ files with updated pattern
+R1_files=($(find "$TRIM_DATA_DIR" -type f -name '*R1*.fastq.gz'))
+R2_files=($(find "$TRIM_DATA_DIR" -type f -name '*R2*.fastq.gz'))
+num_files=${#R1_files[@]}
 
-# Loop through the files in the directory
-for file in ${TRIM_DATA_DIR}/*; do
-  # Check if the file contains 'R1' in its name and add it to the R1 variable
-  if [[ $file == *R1* && $file != *R2* ]]; then
-    R1="$R1 $file"
-  # Check if the file contains 'R2' in its name and add it to the R2 variable
-  elif [[ $file == *R2*]]; then
-    R2="$R2 $file"
-  fi
-done
+# Debugging: print R1 and R2 filenames found
+echo "Number of R1 files: ${#R1_files[@]}"
+echo "Number of R2 files: ${#R2_files[@]}"
 
 # Extract base filename from R2 file
 base_filename=$(basename "$R2")
@@ -147,14 +141,12 @@ base_filename=$(basename "$R2")
 sample_name="${base_filename%%_S*}"
 
 output_dir="/home/ar9416e/mosquito_test/alignments"
-#Run salmon alignment 
 
-echo "Submitting job for sample ${base_filename}"
-    
-    # Submit sbatch job for Salmon alignment
-    sbatch --export=ALL,salmon_index="${salmon_index}",R1="${R1}",R2="${R2}",sample_name="${base_filename}",output_dir="${output_dir}" \
-        salmon_alignment.sh
-done
+# Submit the SLURM job array for paired files
+num_files=${#R1_files[@]}
+echo "Submitting job array for $num_files paired files..."
+sbatch --array=0-$(($num_files - 1)) git_repos/rnaseq_data_scripts/salmon_alignmnent.sh
+
 
 
 
