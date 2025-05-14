@@ -115,41 +115,44 @@ mkdir -p "$index_dir"
 # Run salmon index with decoy-aware transcriptome
 salmon index -t trans_and_gen.fa.gz -d decoys.txt -p 30 -i "$index_dir"
 
-
-
-
-
-
-
-#Run alignment with Salmon
+#Step 5: Run alignment with Salmon
 
 #Set path to salmon index
 
-salmon_index = "salmon index file/AGAM_PEST_salmon_index" 
+salmon_index = "/home/ar9416e/mosquito_test/alignments/salmon_index" 
 
 #Trimmed fastq file folder
 
-TRIM_DATA_DIR="trimmed data path"
+TRIM_DATA_DIR="/home/ar9416e/mosquito_test/trimmed_reads"
 
-#Loop through directories within the fastq folder (here SRR should be changed to whatever naming system my files will have)
+# Initialize variables for R1 and R2 files
+R1=""
+R2=""
 
-for dir in ${TRIM_DATA_DIR}"/SRR*;do 
+# Loop through the files in the directory
+for file in ${TRIM_DATA_DIR}/*; do
+  # Check if the file contains 'R1' in its name and add it to the R1 variable
+  if [[ $file == *R1* && $file != *R2* ]]; then
+    R1="$R1 $file"
+  # Check if the file contains 'R2' in its name and add it to the R2 variable
+  elif [[ $file == *R2*]]; then
+    R2="$R2 $file"
+  fi
+done
 
-#Find R1 and R2 files
+# Extract base filename from R2 file
+base_filename=$(basename "$R2")
 
-r1_file = $(find "$dir" -name"*_1.fastq.gz")
-r2_file=$(find "$dir" -name"*_2.fastq.gz")
+# Extract sample name from base filename (up to _S, adjust if needed)
+sample_name="${base_filename%%_S*}"
 
-#Extract sample name
-
-base_filename=$(basename "$dir")
-
+output_dir="/home/ar9416e/mosquito_test/alignments"
 #Run salmon alignment 
 
 echo "Submitting job for sample ${base_filename}"
     
     # Submit sbatch job for Salmon alignment
-    sbatch --export=ALL,salmon_index="${salmon_index}",r1_file="${r1_file}",r2_file="${r2_file}",sample_name="${base_filename}",output_dir="${SALMON_OUT_DIR}" \
+    sbatch --export=ALL,salmon_index="${salmon_index}",R1="${R1}",R2="${R2}",sample_name="${base_filename}",output_dir="${output_dir}" \
         salmon_alignment.sh
 done
 
