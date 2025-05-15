@@ -117,12 +117,10 @@ salmon index -t trans_and_gen.fa.gz -d decoys.txt -p 30 -i "$index_dir"
 
 #Step 5: Run alignment with Salmon
 
-#Set path to salmon index
+# Set path to salmon index (make sure the index directory is used)
+salmon_index="/home/ar9416e/mosquito_test/alignments/salmon_index"
 
-salmon_index = "/home/ar9416e/mosquito_test/alignments/salmon_index" 
-
-#Trimmed fastq file folder
-
+# Trimmed fastq file folder
 TRIM_DATA_DIR="/home/ar9416e/mosquito_test/trimmed_reads"
 
 # Check for both R1 and R2 FASTQ files with updated pattern
@@ -130,27 +128,19 @@ R1_files=($(find "$TRIM_DATA_DIR" -type f -name '*R1*_paired.fastq.gz'))
 R2_files=($(find "$TRIM_DATA_DIR" -type f -name '*R2*_paired.fastq.gz'))
 num_files=${#R1_files[@]}
 
-# Debugging: print R1 and R2 filenames found
+# Debug: Print the numbers of files found
 echo "Number of R1 files: ${#R1_files[@]}"
 echo "Number of R2 files: ${#R2_files[@]}"
 
-# Extract base filename from R2 file
-base_filename=$(basename "$R2")
+# Export variables so that they are accessible by the job script
+export R1_files
+export R2_files
+export salmon_index
 
-# Extract sample name from base filename (up to _S, adjust if needed)
-sample_name="${base_filename%%_S*}"
-
-output_dir="/home/ar9416e/mosquito_test/alignments"
+# You can also export any other variables needed in salmon_alignment.sh, e.g.:
+export output_dir="/home/ar9416e/mosquito_test/alignments"
 
 # Submit the SLURM job array for paired files
-num_files=${#R1_files[@]}
 echo "Submitting job array for $num_files paired files..."
 sbatch --array=0-$(($num_files - 1)) /home/ar9416e/git_repos/rnaseq_data_scripts/salmon_alignment.sh
-
-
-
-
-
-
-
 
