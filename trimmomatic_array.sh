@@ -12,7 +12,7 @@ module load Java/17.0.6
 module load Trimmomatic/0.39-Java-17
 
 # Adapter file 
-adapter_file="/home/ar9416e/git_repos/Illumina_adapters/illumina_full_adapters.fa"
+adapter_file="/home/ar9416e/git_repos/Illumina_adapters/illumina_adapters_trimmomatic.fa"
 
 # Check adapter file exists
 if [[ ! -f "$adapter_file" ]]; then
@@ -70,7 +70,7 @@ java -jar /opt/software/eb/software/Trimmomatic/0.39-Java-17/trimmomatic-0.39.ja
   "$R1" "$R2" \
   "$output_R1_paired" "$output_R1_unpaired" \
   "$output_R2_paired" "$output_R2_unpaired" \
-  ILLUMINACLIP:/home/ar9416e/git_repos/Illumina_adapters/illumina_full_adapters.fa:2:30:10 \
+  ILLUMINACLIP:/home/ar9416e/git_repos/Illumina_adapters/illumina_adapters_trimmomatic.fa:2:30:10 \
   LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 \
   -trimlog "$trim_log"
 
