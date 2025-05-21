@@ -61,7 +61,7 @@ sbatch --array=0-$((36 - 1)) git_repos/rnaseq_data_scripts/cutadapt_polya.sh
 ## Step 3: QC with FastQC
 
 # Directory containing the raw data
-export raw_data_dir="/home/ar9416e/mosquito_test/trimmed_reads"
+export raw_data_dir="/home/ar9416e/mosquito_test/trimmed_reads_polyA"
 ls "$raw_data_dir"
 
 # Set Internal Field Separator (IFS) to newline to handle filenames with spaces
