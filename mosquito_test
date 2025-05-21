@@ -54,11 +54,11 @@ num_files=${#R1_files[@]}
 echo "Submitting job array for $num_files paired files..."
 sbatch --array=0-$(($num_files - 1)) git_repos/rnaseq_data_scripts/trimmomatic_array.sh
 
-##Submitting a job for cutadapt:
+##Submitting a job for cutadapt (DO NOT USE UNLESS SURE OF WHAT REMOVING)
 
 sbatch --array=0-$((36 - 1)) git_repos/rnaseq_data_scripts/cutadapt_polya.sh
 
-## Step 3: QC with FastQC
+## Step 3: QC with FastQC (Post-trimming)
 
 # Directory containing the raw data
 export raw_data_dir="/home/ar9416e/mosquito_test/trimmed_reads_polyA"
@@ -147,4 +147,16 @@ export output_dir="/home/ar9416e/mosquito_test/alignments"
 # Submit the SLURM job array for paired files
 echo "Submitting job array for $num_files paired files..."
 sbatch --array=0-$(($num_files - 1)) /home/ar9416e/git_repos/rnaseq_data_scripts/salmon_alignment.sh
+
+# Get % mapped reads
+for d in *_quant; do
+  log_file="$d/logs/salmon_quant.log"
+  if [[ -f "$log_file" ]]; then
+    rate=$(grep "Mapping rate" "$log_file" | awk -F'= ' '{print $2}')
+    echo "$d: $rate"
+  else
+    echo "$d: log file not found"
+  fi
+done > percentage_mapped
+# filepath: alignments/extract_mapping_rates.sh
 
