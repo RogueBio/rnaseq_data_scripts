@@ -8,7 +8,7 @@
 #SBATCH --array=0-36
 
 # Load Cutadapt
-module load cutadapt/4.3
+module load cutadapt/4.2-GCCcore-11.3.0
 
 # Directories
 input_dir="/home/ar9416e/mosquito_test/trimmed_reads"
