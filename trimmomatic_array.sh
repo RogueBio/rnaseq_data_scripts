@@ -44,7 +44,7 @@ echo "R1 file selected: $R1"
 echo "R2 file selected: $R2"
 
 # Extract the base name for the sample (without R1 or R2 part)
-base=$(basename "$R1" _.fastq.gz)
+base=$(basename "$R1" | cut -d'_' -f1)
 
 # Define output file paths
 output_R1_paired="${output_dir}/${base}_R1_paired.fastq.gz"
