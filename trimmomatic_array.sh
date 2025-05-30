@@ -43,15 +43,18 @@ echo "SLURM_ARRAY_TASK_ID: $SLURM_ARRAY_TASK_ID"
 echo "R1 file selected: $R1"
 echo "R2 file selected: $R2"
 
-# Extract the base name for the sample (without R1 or R2 part)
+# Extract the base name from the FASTQ file (first part before the first underscore)
 base=$(basename "$R1" | cut -d'_' -f1)
 
+# Add '_trimmed' suffix to indicate processed files
+base_trimmed="${base}_trimmed"
+
 # Define output file paths
-output_R1_paired="${output_dir}/${base}_R1_paired.fastq.gz"
-output_R1_unpaired="${output_dir}/${base}_R1_unpaired.fastq.gz"
-output_R2_paired="${output_dir}/${base}_R2_paired.fastq.gz"
-output_R2_unpaired="${output_dir}/${base}_R2_unpaired.fastq.gz"
-trim_log="${output_dir}/${base}_trim_log.txt"
+output_R1_paired="${output_dir}/${base_trimmed}_R1_paired.fastq.gz"
+output_R1_unpaired="${output_dir}/${base_trimmed}_R1_unpaired.fastq.gz"
+output_R2_paired="${output_dir}/${base_trimmed}_R2_paired.fastq.gz"
+output_R2_unpaired="${output_dir}/${base_trimmed}_R2_unpaired.fastq.gz"
+trim_log="${output_dir}/${base_trimmed}_trim_log.txt"
 
 # Output for debugging
 echo "Output files:"
