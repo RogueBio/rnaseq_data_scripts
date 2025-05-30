@@ -24,21 +24,19 @@ R2_files=($(find "$input_dir" -type f -name '*_R2_paired.fastq.gz' | sort))
 R1=${R1_files[$SLURM_ARRAY_TASK_ID]}
 R2=${R2_files[$SLURM_ARRAY_TASK_ID]}
 
-## Extract base name (no extension)
-base=$(basename "$R1" .fastq.gz)
+# Extract base sample name (e.g., UJ-3092-25-1B)
+sample_name=$(basename "$R1" _R1_paired.fastq.gz)
 
-# Insert '_cut' before .fastq.gz
-cut_base_R1="${base/_R1_paired/_cut_R1_paired}"
+# Construct output filenames
+cut_base_R1="${sample_name}_cut_R1_paired"
+cut_base_R2="${sample_name}_cut_R2_paired"
 
-# Replace only the paired part for R2 too
-cut_base_R2="${cut_base/_R1_paired/_R2_paired}"
-
-# Final output paths
+# Output paths
 R1_out="${output_dir}/${cut_base_R1}.fastq.gz"
 R2_out="${output_dir}/${cut_base_R2}.fastq.gz"
 
-# Run Cutadapt to remove polyA/T tails
-echo "Processing $base"
+# Run Cutadapt
+echo "Processing ${sample_name}"
 cutadapt \
   -a "A{20}" -A "T{20}" \
   -o "$R1_out" \
@@ -47,8 +45,8 @@ cutadapt \
 
 # Check result
 if [[ $? -eq 0 ]]; then
-  echo "PolyA/T trimming done for $base"
+  echo "PolyA/T trimming done for ${sample_name}"
 else
-  echo "Cutadapt failed for $base"
+  echo "Cutadapt failed for ${sample_name}"
   exit 1
 fi
