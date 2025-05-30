@@ -40,7 +40,7 @@ R2_out="${output_dir}/${cut_base_R2}.fastq.gz"
 # Run Cutadapt to remove polyA/T tails
 echo "Processing $base"
 cutadapt \
-  -a "A{15}" -A "T{15}" \
+  -a "A{20}" -A "T{20}" \
   -o "$R1_out" \
   -p "$R2_out" \
   "$R1" "$R2"
