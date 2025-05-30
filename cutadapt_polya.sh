@@ -24,12 +24,18 @@ R2_files=($(find "$input_dir" -type f -name '*_R2_paired.fastq.gz' | sort))
 R1=${R1_files[$SLURM_ARRAY_TASK_ID]}
 R2=${R2_files[$SLURM_ARRAY_TASK_ID]}
 
-# Extract base name
-base=$(basename "$R1" _R1_paired.fastq.gz)
+## Extract base name (no extension)
+base=$(basename "$R1" .fastq.gz)
 
-# Output paths
-R1_out="${output_dir}/${base}_R1_polyAT_trimmed.fastq.gz"
-R2_out="${output_dir}/${base}_R2_polyAT_trimmed.fastq.gz"
+# Insert '_cut' before .fastq.gz
+cut_base_R1="${base/_R1_paired/_cut_R1_paired}"
+
+# Replace only the paired part for R2 too
+cut_base_R2="${cut_base/_R1_paired/_R2_paired}"
+
+# Final output paths
+R1_out="${output_dir}/${cut_base_R1}.fastq.gz"
+R2_out="${output_dir}/${cut_base_R2}.fastq.gz"
 
 # Run Cutadapt to remove polyA/T tails
 echo "Processing $base"
