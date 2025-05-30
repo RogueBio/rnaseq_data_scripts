@@ -41,3 +41,38 @@ mosquito_phagostimulants/
 4) Alignment using Salmon: As opposed to simple counts, can correct for positional bias -l A (run automatically), for paired read -1 and -2 represent each of the pairs
 5) DESeq sample conversion from Salmon output
 6) DESeq
+
+
+# Trimmomatic
+
+Had some issues with naming system, I have changeed the naming as it was adding some extra information, as I had already ran the samples I renamed using:
+
+``` cd /home/ar9416e/mosquito_test/trimmed_reads
+
+for file in *.fastq.gz *.txt; do
+  # Get base sample name (e.g., UJ-3092-25-1B)
+  base=$(echo "$file" | sed -E 's/(_S[0-9]+_L[0-9]{3}_R[12]_001\.fastq\.gz)?_R[12]_(un)?paired\.fastq\.gz$//')
+  base=$(echo "$base" | sed -E 's/(_S[0-9]+_L[0-9]{3}_R[12]_001\.fastq\.gz)?_trim_log\.txt$//')
+
+  # Figure out the suffix
+  if [[ "$file" == *"_R1_paired.fastq.gz" ]]; then
+    suffix="_trimmed_R1_paired.fastq.gz"
+  elif [[ "$file" == *"_R1_unpaired.fastq.gz" ]]; then
+    suffix="_trimmed_R1_unpaired.fastq.gz"
+  elif [[ "$file" == *"_R2_paired.fastq.gz" ]]; then
+    suffix="_trimmed_R2_paired.fastq.gz"
+  elif [[ "$file" == *"_R2_unpaired.fastq.gz" ]]; then
+    suffix="_trimmed_R2_unpaired.fastq.gz"
+  elif [[ "$file" == *"_trim_log.txt" ]]; then
+    suffix="_trimmed_trim_log.txt"
+  else
+    echo "Skipping unknown file format: $file"
+    continue
+  fi
+
+  new_name="${base}${suffix}"
+
+  echo "Renaming: $file → $new_name"
+  mv "$file" "$new_name"
+done
+```
