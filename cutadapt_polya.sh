@@ -35,10 +35,11 @@ cut_base_R2="${sample_name}_cut_R2_paired"
 R1_out="${output_dir}/${cut_base_R1}.fastq.gz"
 R2_out="${output_dir}/${cut_base_R2}.fastq.gz"
 
-# Run Cutadapt
+# Run Cutadapt to remove polyA/T/C/G tails
 echo "Processing ${sample_name}"
 cutadapt \
-  -a "A{20}" -A "T{20}" \
+  -a "A{20}" -a "C{20}" \
+  -A "T{20}" -A "G{20}" \
   -o "$R1_out" \
   -p "$R2_out" \
   "$R1" "$R2"
