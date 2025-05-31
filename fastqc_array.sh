@@ -11,7 +11,7 @@ module load FastQC/0.12.1-Java-17
 
 # Setup
 raw_data_dir="home/ar9416e/mosquito_test/trimmed_reads_polyA"  # Fixed path
-output_dir="home/ar9416e/mosquito_test/trimmed_cut_fastqc_results"
+output_dir="/home/ar9416e/mosquito_test/trimmed_cut_fastqc_results"
 mkdir -p "$output_dir"
 mkdir -p logs  # Ensure logs directory exists
 
