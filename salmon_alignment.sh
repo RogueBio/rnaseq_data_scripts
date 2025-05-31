@@ -18,8 +18,8 @@ salmon_index="/home/ar9416e/mosquito_test/alignments/salmon_index"
 output_dir="/home/ar9416e/mosquito_test/alignments"
 
 # Define read file arrays
-R1_files=(/home/ar9416e/mosquito_test/trimmed_reads/*_R1_paired.fastq.gz)
-R2_files=(/home/ar9416e/mosquito_test/trimmed_reads/*_R2_paired.fastq.gz)
+R1_files=(/home/ar9416e/mosquito_test/trimmed_reads_polyA/*_R1_paired.fastq.gz)
+R2_files=(/home/ar9416e/mosquito_test/trimmed_reads_polyA/*_R2_paired.fastq.gz)
 
 # Get the correct input files based on the array task ID
 R1="${R1_files[$SLURM_ARRAY_TASK_ID]}"
