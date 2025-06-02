@@ -40,6 +40,7 @@ echo "Processing ${sample_name}"
 cutadapt \
   -a "A{20}" -a "C{20}" \
   -A "T{20}" -A "G{20}" \
+  -m 20 \
   -o "$R1_out" \
   -p "$R2_out" \
   "$R1" "$R2"
